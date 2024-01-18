@@ -1,0 +1,36 @@
+pipeline{
+    agent any
+    stages{
+        stage('checkout the code from github'){
+            steps{
+                 git url: 'https://github.com/aniketmore620/Aniket-DevOpsClassCodes'
+                 echo 'github url checkout'
+            }
+        }
+        stage('codecompile with aniket'){
+            steps{
+                echo 'starting compiling'
+                sh 'mvn compile'
+            }
+        }
+         stage('codetest with aniket'){
+            steps{
+                echo 'starting testing'
+                sh 'mvn test'
+            }
+         }
+          
+           stage('code-qa with aniket'){
+            steps{
+                echo 'starting qa'
+                sh 'mvn checkstle:checkstyle'
+            }
+           }
+            stage('code-packaging with aniket'){
+            steps{
+                echo 'starting packaging'
+                sh 'mvn package'
+    }
+            }
+}
+}
