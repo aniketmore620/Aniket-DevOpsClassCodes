@@ -1,36 +1,85 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage('checkout the code from github'){
-            steps{
-                 git url: 'https://github.com/aniketmore620/Aniket-DevOpsClassCodes'
-                 echo 'github url checkout'
+
+    stages {
+        stage('Checkout the code from GitHub') {
+            steps {
+                script {
+                    git url: 'https://github.com/aniketmore620/Aniket-DevOpsClassCodes'
+                    echo 'GitHub URL checkout'
+                }
             }
         }
-        stage('codecompile with aniket'){
-            steps{
-                echo 'starting compiling'
-                sh 'mvn compile'
+
+        stage('Code Compile with Aniket') {
+            steps {
+                echo 'Starting compiling'
+                script {
+                    try {
+                        sh 'mvn compile'
+                    } catch (Exception ex) {
+                        currentBuild.result = 'FAILURE'
+                        error "Compilation failed: ${ex.message}"
+                    }
+                }
             }
         }
-         stage('codetest with aniket'){
-            steps{
-                echo 'starting testing'
-                sh 'mvn test'
+
+        stage('Code Test with Aniket') {
+            steps {
+                echo 'Starting testing'
+                script {
+                    try {
+                        sh 'mvn test'
+                    } catch (Exception ex) {
+                        currentBuild.result = 'FAILURE'
+                        error "Tests failed: ${ex.message}"
+                    }
+                }
             }
-         }
-          
-           stage('code-qa with aniket'){
-            steps{
-                echo 'starting qa'
-                sh 'mvn checkstle:checkstyle'
+        }
+
+        stage('Code QA with Aniket') {
+            steps {
+                echo 'Starting QA'
+                script {
+                    try {
+                        sh 'mvn checkstyle:check'
+                    } catch (Exception ex) {
+                        currentBuild.result = 'FAILURE'
+                        error "QA failed: ${ex.message}"
+                    }
+                }
             }
-           }
-            stage('code-packaging with aniket'){
-            steps{
-                echo 'starting packaging'
-                sh 'mvn package'
+        }
+
+        stage('Code Packaging with Aniket') {
+            steps {
+                echo 'Starting packaging'
+                script {
+                    try {
+                        sh 'mvn package'
+                    } catch (Exception ex) {
+                        currentBuild.result = 'FAILURE'
+                        error "Packaging failed: ${ex.message}"
+                    }
+                }
+            }
+        }
     }
-            }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+        }
+        success {
+            echo 'Build successful. Deploying (if applicable)...'
+            // Add deployment steps here if needed
+        }
+        failure {
+            echo 'Build failed. Notify the team...'
+            // Add notification or alert steps here if needed
+        }
+    }
 }
-}
+
