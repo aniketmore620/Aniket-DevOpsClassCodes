@@ -44,7 +44,7 @@ pipeline {
                 echo 'Starting QA'
                 script {
                     try {
-                        sh 'mvn checkstyle:check'
+                        sh 'mvn checkstyle:checkstyle'
                     } catch (Exception ex) {
                         currentBuild.result = 'FAILURE'
                         error "QA failed: ${ex.message}"
