@@ -1,85 +1,31 @@
-pipeline {
+pipeline{
     agent any
-
-    stages {
-        stage('Checkout the code from GitHub') {
-            steps {
-                script {
-                    git url: 'https://github.com/aniketmore620/Aniket-DevOpsClassCodes'
-                    echo 'GitHub URL checkout'
-                }
-            }
-        }
-
-        stage('Code Compile with Aniket') {
-            steps {
-                echo 'Starting compiling'
-                script {
-                    try {
-                        sh 'mvn compile'
-                    } catch (Exception ex) {
-                        currentBuild.result = 'FAILURE'
-                        error "Compilation failed: ${ex.message}"
-                    }
-                }
-            }
-        }
-
-        stage('Code Test with Aniket') {
-            steps {
-                echo 'Starting testing'
-                script {
-                    try {
-                        sh 'mvn test'
-                    } catch (Exception ex) {
-                        currentBuild.result = 'FAILURE'
-                        error "Tests failed: ${ex.message}"
-                    }
-                }
-            }
-        }
-
-        stage('Code QA with Aniket') {
-            steps {
-                echo 'Starting QA'
-                script {
-                    try {
-                        sh 'mvn checkstyle:checkstyle'
-                    } catch (Exception ex) {
-                        currentBuild.result = 'FAILURE'
-                        error "QA failed: ${ex.message}"
-                    }
-                }
-            }
-        }
-
-        stage('Code Packaging with Aniket') {
-            steps {
-                echo 'Starting packaging'
-                script {
-                    try {
-                        sh 'mvn package'
-                    } catch (Exception ex) {
-                        currentBuild.result = 'FAILURE'
-                        error "Packaging failed: ${ex.message}"
-                    }
-                }
-            }
+    stages{
+        stage('checkout the code from github'){
+        steps{
+            git url: 'https://github.com/aniketmore620/Aniket-DevOpsClassCodes.git'
+            echo 'github url checkout'
         }
     }
-
-    post {
-        always {
-            echo 'Cleaning up...'
-        }
-        success {
-            echo 'Build successful. Deploying (if applicable)...'
-            // Add deployment steps here if needed
-        }
-        failure {
-            echo 'Build failed. Notify the team...'
-            // Add notification or alert steps here if needed
+    stage('code-compiling aniket'){
+        steps{
+            sh 'mvn compile'
         }
     }
-}
-
+    stage('testing code'){
+        steps{
+            sh 'mvn test'
+        }
+    }
+    stage('qa code'){
+        steps{
+            sh 'mvn checkstyle:checkstyle'
+        }
+    }
+    stage('package code'){
+        steps{
+            sh 'mvn package'
+        }
+    }
+    }
+} 
